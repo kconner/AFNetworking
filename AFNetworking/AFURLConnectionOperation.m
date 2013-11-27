@@ -534,6 +534,9 @@ static BOOL AFSecKeyIsEqualToKey(SecKeyRef key1, SecKeyRef key2) {
 
 - (void)finish {
     self.state = AFOperationFinishedState;
+
+    // Evaluate the error before dispatching completion notifications to other threads, since .HTTPError could otherwise be set by multiple threads at once.
+    [self error];
     
     dispatch_async(dispatch_get_main_queue(), ^{
         [[NSNotificationCenter defaultCenter] postNotificationName:AFNetworkingOperationDidFinishNotification object:self];
